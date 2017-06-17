@@ -1,39 +1,99 @@
 var map = [
-	[1,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0],
-	[0,2,2,2,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0],
-	[2,2,0,2,2,0,0,0,0],
-	[0,0,0,0,0,0,0,0,0],
-	[0,2,0,2,0,0,0,0,0],
-	[0,2,0,2,0,0,0,0,0],
-]
+	[2,2,2,2,2,2,2,2,3,3],
+	[2,0,0,0,0,0,0,2,2,2],
+	[2,0,0,0,0,0,0,0,0,2],
+	[2,2,2,2,0,0,0,0,0,2],
+	[2,0,0,0,0,0,0,0,0,2],
+	[2,0,0,0,0,0,0,0,0,2],
+	[2,2,0,2,2,0,0,0,2,2],
+	[2,0,0,0,0,0,0,0,0,2],
+	[2,2,0,2,0,0,0,0,0,2],
+	[3,2,0,2,0,0,2,0,2,2],
+	[3,2,0,2,0,0,2,0,2,3],
+	[3,2,0,2,0,0,2,0,2,3],
+	[3,2,0,0,0,0,0,0,2,3],
+	[3,2,2,2,2,2,2,2,2,3],
+];
 
+function getRandomArbitrary(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function entite (nom) {
+	this.nom = nom;
+	this.peuxBouger = false;
+	this.largeur = 40;
+	this.hauteur = 40;
+	this.coordX= 2;
+	this.coordY= 2;
+	this.x = this.largeur * this.coordX;
+	this.y = this.hauteur * this.coordY;
+	this.vitesse = 40;
+}
+
+var joueur = new entite('#joueur1');
+var joueur2 = new entite('#joueur2');
+	joueur2.coordX = 3;
+	joueur2.x = 120;
+	console.log(joueur2.x);
 
 var game = {
 
 	introduction : 'Introduction ...',
-	
-	joueur: {
-		nom: '#joueur1',
-		peuxBouger: false,
-		largeur: 40,
-		hauteur: 40,
-		x: 0,
-		y: 0,
-		coordX: 0,
-		coordY: 0,
-		vitesse: 40,
-	},
-	
+
 	enemi: {
-		
+        nom: '#enemi',
+        peuxBouger: false,
+        largeur: 40,
+        hauteur: 40,
+        x: 240,
+        y: 240,
+        coordX: 6,
+        coordY: 6,
+        vitesse: 40,
+		rode: function() {
+
+            var plus = true;
+            var ia = setInterval(function(){
+                //console.log(getRandomArbitrary(37,41));
+				//game.move(game.enemi,getRandomArbitrary(37,41));
+                if(plus) {
+					if(game.checkMove(game.enemi,'x+'))
+                        game.move(game.enemi,39)
+					else
+						plus = false;
+				}
+                if(plus==false) {
+                    if(game.checkMove(game.enemi,'x-'))
+                        game.move(game.enemi,37)
+                    else
+                        plus = true
+				}
+
+            }, 500);
+
+		}
 	},
 	
 	tableau: {
 		largeur : 40 * map[0].length,
 		hauteur : 40 * map.length,
+	},
+
+	spawn: function(entite) {
+		console.log(entite);
+		$('#map').append('<div id="'+entite.nom.replace('#','')+'"></div>');
+        $(entite.nom).css({
+            'left':entite.x,
+            'top':entite.y,
+            'width':entite.largeur,
+            'height':entite.hauteur,
+        });
+        entite.peuxBouger = true;
+        map[entite.coordY][entite.coordX] = 1;
+        console.log(map);
 	},
 	
 	init : function() {
@@ -51,6 +111,8 @@ var game = {
 			$.each(value, function (i,a){
 				if(a==2)
 					$('#map').append('<div class="block block-2"></div>');
+				else if(a==3)
+					$('#map').append('<div class="block block-3"></div>');
 				else
 					$('#map').append('<div class="block"></div>');
 			});
@@ -60,89 +122,105 @@ var game = {
 
 	play : function () {
 		$('button#play').remove();
-		$('#map').append('<div id="joueur1"></div>');
-		$(this.joueur.nom).css({
-			'left':this.joueur.x,
-			'top':this.joueur.y,
-			'width':this.joueur.largeur,
-			'height':this.joueur.hauteur,	
-		});
-		this.joueur.peuxBouger = true;
+		this.spawn(joueur);
+		this.spawn(joueur2);
+		this.spawn(this.enemi);
+
+		this.enemi.rode();
+		this.enemi.peuxBouger = true;
 		return this.introduction;
 	},
 	
-	move : function (key) {
-		if(this.joueur.peuxBouger===true) {
-			if(key==37 && this.checkMove('x-')) {
-				this.joueur.x -= this.joueur.vitesse;
-				map[this.joueur.coordY][this.joueur.coordX] = 0;
-				map[this.joueur.coordY][this.joueur.coordX-1] = 1;
-				this.joueur.coordX--;
-				$(this.joueur.nom).css({
-					'left':this.joueur.x,
-					'transform':'rotateZ(-90deg)',
-				});
+	move : function (objet,key) {
+		if(objet.peuxBouger===true) {
+			if(key==37) {
+                $(objet.nom).css({
+                    'transform':'rotateZ(270deg)'
+                });
+                if(this.checkMove(objet,'x-')) {
+                    objet.x -= objet.vitesse;
+                    map[objet.coordY][objet.coordX] = 0;
+                    map[objet.coordY][objet.coordX-1] = 1;
+                    objet.coordX--;
+                    $(objet.nom).css({
+                        'left':objet.x,
+                    });
+                    return true;
+                }
 			}
-			if(key==39 && this.checkMove('x+')) {
-				this.joueur.x += this.joueur.vitesse;
-				map[this.joueur.coordY][this.joueur.coordX] = 0;
-				map[this.joueur.coordY][this.joueur.coordX+1] = 1;
-				this.joueur.coordX++;
-				$(this.joueur.nom).css({
-					'left':this.joueur.x,
-					'transform':'rotateZ(90deg)',
-				});
+			if(key==39) {
+                $(objet.nom).css({
+                    'transform':'rotateZ(90deg)'
+                });
+				if(this.checkMove(objet,'x+')) {
+					objet.x += objet.vitesse;
+					map[objet.coordY][objet.coordX] = 0;
+					map[objet.coordY][objet.coordX+1] = 1;
+					objet.coordX++;
+					$(objet.nom).css({
+						'left':objet.x
+					});
+					return true;
+				}
 			}
-			if(key==38 && this.checkMove('y-')) {
-				this.joueur.y -= this.joueur.vitesse;
-				map[this.joueur.coordY][this.joueur.coordX] = 0;
-				map[this.joueur.coordY-1][this.joueur.coordX] = 1;
-				this.joueur.coordY--;
-				$(this.joueur.nom).css({
-					'top':this.joueur.y,
-					'transform':'rotateZ(0deg)',
-				});
+			if(key==38) {
+                $(objet.nom).css({
+                    'transform':'rotateZ(0deg)'
+                });
+				if(this.checkMove(objet,'y-')) {
+					objet.y -= objet.vitesse;
+					map[objet.coordY][objet.coordX] = 0;
+					map[objet.coordY-1][objet.coordX] = 1;
+					objet.coordY--;
+					$(objet.nom).css({
+						'top':objet.y,
+					});
+					return true;
+				}
 			}
-			if(key==40 && this.checkMove('y+')) {
-				this.joueur.y += this.joueur.vitesse;
-				map[this.joueur.coordY][this.joueur.coordX] = 0;
-				map[this.joueur.coordY+1][this.joueur.coordX] = 1;
-				this.joueur.coordY++;
-				$(this.joueur.nom).css({
-					'top':this.joueur.y,
-					'transform':'rotateZ(180deg)',
-				});
+			if(key==40) {
+                $(objet.nom).css({
+                    'transform':'rotateZ(180deg)'
+                });
+				if(this.checkMove(objet,'y+')) {
+					objet.y += objet.vitesse;
+					map[objet.coordY][objet.coordX] = 0;
+					map[objet.coordY+1][objet.coordX] = 1;
+					objet.coordY++;
+					$(objet.nom).css({
+						'top':objet.y
+					});
+					return true;
+				}
 			}
+			return false;
 		}
-		console.log(this.joueur.coordX+'/'+this.joueur.coordY);
-		console.log(map);
+        console.log(map);
+		console.log(objet.nom+' : '+objet.coordX+'/'+objet.coordY);
+		//console.log(map);
 	
 	},
 	
-	checkMove : function(direction) {
-		if(direction=='x-' && this.joueur.x >= 0 && (this.joueur.x - this.joueur.vitesse) >= 0) {
-			if(map[this.joueur.coordY][this.joueur.coordX-1]==0)
+	checkMove : function(objet,direction) {
+		if(direction=='x-' && objet.x >= 0 && (objet.x - objet.vitesse) >= 0) {
+			if(map[objet.coordY][objet.coordX-1]==0)
 				return true;
 		}
-		else if(direction=='x+' && this.joueur.x <= this.tableau.largeur-this.joueur.largeur-this.joueur.vitesse) {
-			if(map[this.joueur.coordY][this.joueur.coordX+1]==0)
+		else if(direction=='x+' && objet.x <= this.tableau.largeur-objet.largeur-objet.vitesse) {
+			if(map[objet.coordY][objet.coordX+1]==0)
 				return true;
 		}
-		else if(direction=='y-' && this.joueur.y >= 0 && (this.joueur.y - this.joueur.vitesse) >= 0) {
-			if(map[this.joueur.coordY-1][this.joueur.coordX]==0)
+		else if(direction=='y-' && objet.y >= 0 && (objet.y - objet.vitesse) >= 0) {
+			if(map[objet.coordY-1][objet.coordX]==0)
 				return true;
 		}
-		else if(direction=='y+' && this.joueur.y <= this.tableau.hauteur-this.joueur.hauteur-this.joueur.vitesse) {
-			if(map[this.joueur.coordY+1][this.joueur.coordX]==0)
+		else if(direction=='y+' && objet.y <= this.tableau.hauteur-objet.hauteur-objet.vitesse) {
+			if(map[objet.coordY+1][objet.coordX]==0)
 				return true;
 		}
 		return false;
 	}
 }
-
-var ia = setInterval(function(){
-	
-}, 300);
 
 $(document).ready(function() {
 	
@@ -150,7 +228,7 @@ $(document).ready(function() {
 	game.play();
 	
 	$(document).keydown(function( e ) {
-		game.move(e.keyCode);
+		game.move(joueur,e.keyCode);
 /*
 		if(e.keyCode==37)
 			console.log('gauche');

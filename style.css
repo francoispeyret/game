@@ -46,17 +46,36 @@ a{
 }
 
 #map .block {
-	border: 1px solid #333;
 	width: 40px;
 	height: 40px;
 	float: left;
 	box-sizing: border-box;
+	position: relative;
+	background-image: url(assets/carrelage.png);
 }
 
 #map .block.block-2 {
+	background: #222;
+	border-color: #2F2F2F;
+}
+#map .block.block-2:before {
+	content:"";
+	display: block;
+	position: absolute;
+	left: 0;
+	top: -14px;
+	right: 0;
+	bottom: 14px;
+	background: #4F4F4F;
+	background-image: url(assets/mur.png);
+	z-index: 10;
+}
+#map .block.block-3 {
 	background: #333;
-} 
+	border-color: #333;
+}
 
+#joueur2,
 #joueur1{
 	height: 90px;
 	width: 90px;
@@ -70,6 +89,11 @@ a{
 	transition: all ease-in 0.1s;
 }
 
+#joueur2 {
+	background: #3dabdd;
+}
+
+#joueur2::before,
 #joueur1::before{
 	content:"";
 	display:block;
@@ -82,3 +106,29 @@ a{
 	margin-left: -4px;
 	margin-top: -4px;
 } 
+
+#enemi{
+	height: 90px;
+	width: 90px;
+	box-sizing: border-box;
+	border: 1px solid #000;
+	background: #77ff2b;
+	border-radius: 50%;
+	position: absolute;
+	left: auto;
+	top: auto;
+	transition: all ease-in 0.1s;
+}
+
+#enemi::before{
+	content:"";
+	display:block;
+	width: 8px;
+	height: 8px;
+	border-radius: 8px;
+	background: #000;
+	position: absolute;
+	left: 50%;
+	margin-left: -4px;
+	margin-top: -4px;
+}
