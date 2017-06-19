@@ -86,7 +86,7 @@ a{
 	position: absolute;
 	left: auto;
 	top: auto;
-	transition: all ease-in 0.1s;
+	transition: all ease-in 0.2s;
 }
 
 #joueur2 {

@@ -28,16 +28,60 @@ function entite (nom) {
 	this.hauteur = 40;
 	this.coordX= 2;
 	this.coordY= 2;
+	this.orientation = 0;
 	this.x = this.largeur * this.coordX;
 	this.y = this.hauteur * this.coordY;
 	this.vitesse = 40;
+
+	this.vie = 10;
+
+	this.attaque = function () {
+        if(this.orientation==0) {
+            if(map[this.coordY-1][this.coordX]==1)
+            {
+                for (var i = 0, len = entites.length; i < len; i++) {
+                    if(this.coordY-1==entites[i].coordY)
+                        game.degat(entites[i],2);
+                }
+            }
+		}
+		if(this.orientation==90) {
+			if(map[this.coordY][this.coordX+1]==1) {
+                for (var i = 0, len = entites.length; i < len; i++) {
+                    if(this.coordX+1==entites[i].coordX)
+                    	game.degat(entites[i],2);
+                }
+			}
+		}
+		if(this.orientation==180) {
+			if(map[this.coordY+1][this.coordX]==1) {
+                for (var i = 0, len = entites.length; i < len; i++) {
+                    if(this.coordY+1==entites[i].coordY)
+                        game.degat(entites[i],2);
+                }
+			}
+		}
+		if(this.orientation==270) {
+			if(map[this.coordY][this.coordX-1]==1) {
+                for (var i = 0, len = entites.length; i < len; i++) {
+                    if(this.coordX-1==entites[i].coordX)
+                        game.degat(entites[i],2);
+                }
+			}
+		}
+    }
 }
 
-var joueur = new entite('#joueur1');
-var joueur2 = new entite('#joueur2');
+var entites = [
+	joueur = new entite('#joueur1'),
+];
+
+entites.push(joueur2 = new entite('#joueur2'));
 	joueur2.coordX = 3;
 	joueur2.x = 120;
-	console.log(joueur2.x);
+//var joueur = new entite('#joueur1');
+//var joueur2 = new entite('#joueur2');
+	//console.log(joueur2.x);
 
 var game = {
 
@@ -83,7 +127,7 @@ var game = {
 	},
 
 	spawn: function(entite) {
-		console.log(entite);
+	//	console.log(entite);
 		$('#map').append('<div id="'+entite.nom.replace('#','')+'"></div>');
         $(entite.nom).css({
             'left':entite.x,
@@ -93,13 +137,13 @@ var game = {
         });
         entite.peuxBouger = true;
         map[entite.coordY][entite.coordX] = 1;
-        console.log(map);
+     //   console.log(map);
 	},
 	
 	init : function() {
 	//	$('#map').css('width',this.tableau.largeur);
 	//	$('#map').css('height',this.tableau.hauteur);
-		console.log('init');
+	//	console.log('init');
 		
 		$('#map').css({
 			height: this.tableau.hauteur,
@@ -107,7 +151,7 @@ var game = {
 		})
 		
 		$.each(map, function( index, value ) {
-			console.log( index + ": " + value );
+			//console.log( index + ": " + value );
 			$.each(value, function (i,a){
 				if(a==2)
 					$('#map').append('<div class="block block-2"></div>');
@@ -134,6 +178,7 @@ var game = {
 	move : function (objet,key) {
 		if(objet.peuxBouger===true) {
 			if(key==37) {
+				objet.orientation = 270;
                 $(objet.nom).css({
                     'transform':'rotateZ(270deg)'
                 });
@@ -149,6 +194,7 @@ var game = {
                 }
 			}
 			if(key==39) {
+                objet.orientation = 90;
                 $(objet.nom).css({
                     'transform':'rotateZ(90deg)'
                 });
@@ -164,6 +210,7 @@ var game = {
 				}
 			}
 			if(key==38) {
+                objet.orientation = 0;
                 $(objet.nom).css({
                     'transform':'rotateZ(0deg)'
                 });
@@ -179,6 +226,7 @@ var game = {
 				}
 			}
 			if(key==40) {
+                objet.orientation = 180;
                 $(objet.nom).css({
                     'transform':'rotateZ(180deg)'
                 });
@@ -195,8 +243,8 @@ var game = {
 			}
 			return false;
 		}
-        console.log(map);
-		console.log(objet.nom+' : '+objet.coordX+'/'+objet.coordY);
+        //console.log(map);
+		//console.log(objet.nom+' : '+objet.coordX+'/'+objet.coordY);
 		//console.log(map);
 	
 	},
@@ -219,16 +267,45 @@ var game = {
 				return true;
 		}
 		return false;
+	},
+
+	degat : function(objet, nbDegat) {
+        console.log('Attack !');
+		objet.vie -= nbDegat;
+		console.log(objet);
+		if(objet.vie <= 0) {
+			game.mort(objet);
+		}
+	},
+
+	soin : function(objet, nbSoin) {
+		objet.vie += nbSoin;
+		console.log(objet);
+	},
+
+	mort : function(objet) {
+        index = entites.indexOf(objet);
+        map[objet.coordY][objet.coordX] = 0;
+        $(objet.nom).remove();
+        if (index > -1) {
+            entites.splice(index, 1);
+        }
+        alert('mort de : '+objet.nom);
 	}
+
 }
 
 $(document).ready(function() {
 	
 	game.init();
 	game.play();
+
+	joueur.attaque(90);
 	
 	$(document).keydown(function( e ) {
 		game.move(joueur,e.keyCode);
+
+        joueur.attaque();
 /*
 		if(e.keyCode==37)
 			console.log('gauche');
