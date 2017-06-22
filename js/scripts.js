@@ -79,6 +79,11 @@ var entites = [
 entites.push(joueur2 = new entite('#joueur2'));
 	joueur2.coordX = 3;
 	joueur2.x = 120;
+entites.push(enemi1 = new entite('#enemi1'));
+	enemi1.coordX = 6;
+	enemi1.coordY = 6;
+	enemi1.x = 240;
+	enemi1.y = 240;
 //var joueur = new entite('#joueur1');
 //var joueur2 = new entite('#joueur2');
 	//console.log(joueur2.x);
@@ -87,40 +92,6 @@ var game = {
 
 	introduction : 'Introduction ...',
 
-	enemi: {
-        nom: '#enemi',
-        peuxBouger: false,
-        largeur: 40,
-        hauteur: 40,
-        x: 240,
-        y: 240,
-        coordX: 6,
-        coordY: 6,
-        vitesse: 40,
-		rode: function() {
-
-            var plus = true;
-            var ia = setInterval(function(){
-                //console.log(getRandomArbitrary(37,41));
-				//game.move(game.enemi,getRandomArbitrary(37,41));
-                if(plus) {
-					if(game.checkMove(game.enemi,'x+'))
-                        game.move(game.enemi,39)
-					else
-						plus = false;
-				}
-                if(plus==false) {
-                    if(game.checkMove(game.enemi,'x-'))
-                        game.move(game.enemi,37)
-                    else
-                        plus = true
-				}
-
-            }, 500);
-
-		}
-	},
-	
 	tableau: {
 		largeur : 40 * map[0].length,
 		hauteur : 40 * map.length,
@@ -128,7 +99,7 @@ var game = {
 
 	spawn: function(entite) {
 	//	console.log(entite);
-		$('#map').append('<div id="'+entite.nom.replace('#','')+'"></div>');
+		$('#map').append('<div id="'+entite.nom.replace('#','')+'" class="entite"></div>');
         $(entite.nom).css({
             'left':entite.x,
             'top':entite.y,
@@ -168,10 +139,9 @@ var game = {
 		$('button#play').remove();
 		this.spawn(joueur);
 		this.spawn(joueur2);
-		this.spawn(this.enemi);
+		this.spawn(enemi1);
+		game.rode(enemi1,'y');
 
-		this.enemi.rode();
-		this.enemi.peuxBouger = true;
 		return this.introduction;
 	},
 	
@@ -290,8 +260,46 @@ var game = {
         if (index > -1) {
             entites.splice(index, 1);
         }
-        alert('mort de : '+objet.nom);
-	}
+	},
+
+
+	rode: function(objet,direction) {
+		direction = typeof direction !== 'undefined' ? direction : 'x';
+
+		var plus = true;
+		var ia = setInterval(function(){
+			if(direction=='x') {
+				if(plus) {
+					if(game.checkMove(objet,'x+'))
+						game.move(objet,39);
+					else
+						plus = false;
+				}
+				if(plus==false) {
+					if(game.checkMove(objet,'x-'))
+						game.move(objet,37);
+					else
+						plus = true
+				}
+			}
+			if (direction=='y') {
+				if(plus) {
+					if(game.checkMove(objet,'y+'))
+						game.move(objet,40);
+					else
+						plus = false;
+				}
+				if(plus==false) {
+					if(game.checkMove(objet,'y-'))
+						game.move(objet,38);
+					else
+						plus = true
+				}
+			}
+
+		}, 500);
+
+	},
 
 }
 

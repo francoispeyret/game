@@ -75,6 +75,7 @@ a{
 	border-color: #333;
 }
 
+.entite,
 #joueur2,
 #joueur1{
 	height: 90px;
@@ -93,6 +94,7 @@ a{
 	background: #3dabdd;
 }
 
+.entite::before,
 #joueur2::before,
 #joueur1::before{
 	content:"";
