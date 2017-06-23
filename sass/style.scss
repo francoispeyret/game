@@ -50,7 +50,7 @@ a{
 		float: left;
 		box-sizing: border-box;
 		position: relative;
-		background-image: url(assets/carrelage.png);
+		background-image: url(../assets/carrelage.png);
 
 		&.block-2 {
 			background: #222;
@@ -65,7 +65,7 @@ a{
 				right: 0;
 				bottom: 14px;
 				background: #4F4F4F;
-				background-image: url(assets/mur.png);
+				background-image: url(../assets/mur.png);
 				z-index: 10;
 			}
 		}

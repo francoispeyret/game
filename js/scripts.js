@@ -1,18 +1,19 @@
 var map = [
 	[2,2,2,2,2,2,2,2,3,3],
-	[2,0,0,0,0,0,0,2,2,2],
+	[2,0,0,0,0,0,0,2,3,3],
+	[3,0,0,0,0,0,0,2,2,2],
 	[2,0,0,0,0,0,0,0,0,2],
 	[2,2,2,2,0,0,0,0,0,2],
 	[2,0,0,0,0,0,0,0,0,2],
 	[2,0,0,0,0,0,0,0,0,2],
 	[2,2,0,2,2,0,0,0,2,2],
-	[2,0,0,0,0,0,0,0,0,2],
+	[2,0,0,0,0,0,0,0,0,3],
 	[2,2,0,2,0,0,0,0,0,2],
 	[3,2,0,2,0,0,2,0,2,2],
 	[3,2,0,2,0,0,2,0,2,3],
 	[3,2,0,2,0,0,2,0,2,3],
 	[3,2,0,0,0,0,0,0,2,3],
-	[3,2,2,2,2,2,2,2,2,3],
+	[3,2,2,2,2,3,2,2,2,3],
 ];
 
 function getRandomArbitrary(min, max) {
@@ -78,12 +79,12 @@ var entites = [
 
 entites.push(joueur2 = new entite('#joueur2'));
 	joueur2.coordX = 3;
-	joueur2.x = 120;
+	joueur2.x = joueur2.coordX * joueur2.largeur;
 entites.push(enemi1 = new entite('#enemi1'));
 	enemi1.coordX = 6;
 	enemi1.coordY = 6;
-	enemi1.x = 240;
-	enemi1.y = 240;
+	enemi1.x = enemi1.coordX * enemi1.largeur;
+	enemi1.y = enemi1.coordY * enemi1.hauteur;
 //var joueur = new entite('#joueur1');
 //var joueur2 = new entite('#joueur2');
 	//console.log(joueur2.x);
@@ -123,15 +124,19 @@ var game = {
 		
 		$.each(map, function( index, value ) {
 			//console.log( index + ": " + value );
+			//setTimeout(function () {
 			$.each(value, function (i,a){
-				if(a==2)
-					$('#map').append('<div class="block block-2"></div>');
-				else if(a==3)
-					$('#map').append('<div class="block block-3"></div>');
-				else
-					$('#map').append('<div class="block"></div>');
+					if(a==2)
+						$('#map').append('<div class="block block-2"></div>');
+					else if(a==3)
+						$('#map').append('<div class="block block-3"></div>');
+					else
+						$('#map').append('<div class="block"></div>');
 			});
+			//},150*index);
 		});
+
+		game.play();
 		
 	},
 
@@ -152,7 +157,7 @@ var game = {
                 $(objet.nom).css({
                     'transform':'rotateZ(270deg)'
                 });
-                if(this.checkMove(objet,'x-')) {
+                if(this.checkMove(objet,'x-')===true) {
                     objet.x -= objet.vitesse;
                     map[objet.coordY][objet.coordX] = 0;
                     map[objet.coordY][objet.coordX-1] = 1;
@@ -162,13 +167,20 @@ var game = {
                     });
                     return true;
                 }
+				if(this.checkMove(objet,'x-')===null) {
+					$(objet.nom)
+						.css('transition','none')
+						.animate({width: 0, height: 0}, 1500, function () {
+							game.mort(objet);
+					});
+				}
 			}
 			if(key==39) {
                 objet.orientation = 90;
                 $(objet.nom).css({
                     'transform':'rotateZ(90deg)'
                 });
-				if(this.checkMove(objet,'x+')) {
+				if(this.checkMove(objet,'x+')===true) {
 					objet.x += objet.vitesse;
 					map[objet.coordY][objet.coordX] = 0;
 					map[objet.coordY][objet.coordX+1] = 1;
@@ -178,13 +190,16 @@ var game = {
 					});
 					return true;
 				}
+				if(this.checkMove(objet,'x+')===null) {
+					game.mort(objet);
+				}
 			}
 			if(key==38) {
                 objet.orientation = 0;
                 $(objet.nom).css({
                     'transform':'rotateZ(0deg)'
                 });
-				if(this.checkMove(objet,'y-')) {
+				if(this.checkMove(objet,'y-')===true) {
 					objet.y -= objet.vitesse;
 					map[objet.coordY][objet.coordX] = 0;
 					map[objet.coordY-1][objet.coordX] = 1;
@@ -194,13 +209,16 @@ var game = {
 					});
 					return true;
 				}
+				if(this.checkMove(objet,'y-')===null) {
+					game.mort(objet);
+				}
 			}
 			if(key==40) {
                 objet.orientation = 180;
                 $(objet.nom).css({
                     'transform':'rotateZ(180deg)'
                 });
-				if(this.checkMove(objet,'y+')) {
+				if(this.checkMove(objet,'y+')===true) {
 					objet.y += objet.vitesse;
 					map[objet.coordY][objet.coordX] = 0;
 					map[objet.coordY+1][objet.coordX] = 1;
@@ -209,6 +227,9 @@ var game = {
 						'top':objet.y
 					});
 					return true;
+				}
+				if(this.checkMove(objet,'y+')===null) {
+					game.mort(objet);
 				}
 			}
 			return false;
@@ -223,18 +244,26 @@ var game = {
 		if(direction=='x-' && objet.x >= 0 && (objet.x - objet.vitesse) >= 0) {
 			if(map[objet.coordY][objet.coordX-1]==0)
 				return true;
+			if(map[objet.coordY][objet.coordX-1]==3)
+				return null;
 		}
 		else if(direction=='x+' && objet.x <= this.tableau.largeur-objet.largeur-objet.vitesse) {
 			if(map[objet.coordY][objet.coordX+1]==0)
 				return true;
+			if(map[objet.coordY][objet.coordX+1]==3)
+				return null;
 		}
 		else if(direction=='y-' && objet.y >= 0 && (objet.y - objet.vitesse) >= 0) {
 			if(map[objet.coordY-1][objet.coordX]==0)
 				return true;
+			if(map[objet.coordY-1][objet.coordX]==3)
+				return null;
 		}
 		else if(direction=='y+' && objet.y <= this.tableau.hauteur-objet.hauteur-objet.vitesse) {
 			if(map[objet.coordY+1][objet.coordX]==0)
 				return true;
+			if(map[objet.coordY+1][objet.coordX]==3)
+				return null;
 		}
 		return false;
 	},
@@ -306,11 +335,10 @@ var game = {
 $(document).ready(function() {
 	
 	game.init();
-	game.play();
 
 	joueur.attaque(90);
 	
-	$(document).keydown(function( e ) {
+	$(document).keyup(function( e ) {
 		game.move(joueur,e.keyCode);
 
         joueur.attaque();
