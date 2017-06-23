@@ -48,7 +48,6 @@ a {
   background: #eee;
   border: 1px solid #333;
 }
-
 #map .block {
   width: 40px;
   height: 40px;
@@ -57,12 +56,10 @@ a {
   position: relative;
   background-image: url(assets/carrelage.png);
 }
-
 #map .block.block-2 {
   background: #222;
   border-color: #2F2F2F;
 }
-
 #map .block.block-2:before {
   content: "";
   display: block;
@@ -75,7 +72,6 @@ a {
   background-image: url(assets/mur.png);
   z-index: 10;
 }
-
 #map .block.block-3 {
   background: #333;
   border-color: #333;
@@ -95,14 +91,9 @@ a {
   top: auto;
   transition: all ease-in 0.2s;
 }
-
-#joueur2 {
-  background: #3dabdd;
-}
-
-.entite::before,
-#joueur2::before,
-#joueur1::before {
+.entite:before,
+#joueur2:before,
+#joueur1:before {
   content: "";
   display: block;
   width: 8px;
@@ -113,6 +104,10 @@ a {
   left: 50%;
   margin-left: -4px;
   margin-top: -4px;
+}
+
+#joueur2 {
+  background: #3dabdd;
 }
 
 #enemi {
@@ -127,8 +122,7 @@ a {
   top: auto;
   transition: all ease-in 0.1s;
 }
-
-#enemi::before {
+#enemi:before {
   content: "";
   display: block;
   width: 8px;
