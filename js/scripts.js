@@ -3,7 +3,7 @@ var map = [
 	[2,0,0,0,0,0,0,2,3,3],
 	[3,0,0,0,0,0,0,2,2,2],
 	[2,0,0,0,0,0,0,0,0,2],
-	[2,2,2,2,0,0,0,0,0,2],
+	[2,2,2,2,3,3,0,3,3,2],
 	[2,0,0,0,0,0,0,0,0,2],
 	[2,0,0,0,0,0,0,0,0,2],
 	[2,2,0,2,2,0,0,0,2,2],
@@ -168,9 +168,13 @@ var game = {
                     return true;
                 }
 				if(this.checkMove(objet,'x-')===null) {
+					objet.x -= objet.vitesse;
 					$(objet.nom)
 						.css('transition','none')
-						.animate({width: 0, height: 0}, 1500, function () {
+						.animate({left:objet.x},500)
+						.animate({
+							width: 0, height: 0,
+							marginTop:30,marginLeft:20}, 500, function () {
 							game.mort(objet);
 					});
 				}
@@ -191,7 +195,15 @@ var game = {
 					return true;
 				}
 				if(this.checkMove(objet,'x+')===null) {
-					game.mort(objet);
+					objet.x += objet.vitesse;
+					$(objet.nom)
+						.css('transition','none')
+						.animate({left:objet.x},500)
+						.animate({
+							width: 0, height: 0,
+							marginTop:30,marginLeft:20}, 500, function () {
+							game.mort(objet);
+						});
 				}
 			}
 			if(key==38) {
@@ -210,7 +222,15 @@ var game = {
 					return true;
 				}
 				if(this.checkMove(objet,'y-')===null) {
-					game.mort(objet);
+					objet.y -= objet.vitesse;
+					$(objet.nom)
+						.css('transition','none')
+						.animate({top:objet.y},500)
+						.animate({
+							width: 0, height: 0,
+							marginTop:30,marginLeft:20}, 500, function () {
+							game.mort(objet);
+						});
 				}
 			}
 			if(key==40) {
@@ -229,7 +249,15 @@ var game = {
 					return true;
 				}
 				if(this.checkMove(objet,'y+')===null) {
-					game.mort(objet);
+					objet.y += objet.vitesse;
+					$(objet.nom)
+						.css('transition','none')
+						.animate({top:objet.y},500)
+						.animate({
+							width: 0, height: 0,
+							marginTop:30,marginLeft:20}, 500, function () {
+							game.mort(objet);
+						});
 				}
 			}
 			return false;
@@ -286,6 +314,9 @@ var game = {
         index = entites.indexOf(objet);
         map[objet.coordY][objet.coordX] = 0;
         $(objet.nom).remove();
+		if(objet.nom=="#joueur1") {
+			alert('t mort gros loozer');
+		}
         if (index > -1) {
             entites.splice(index, 1);
         }

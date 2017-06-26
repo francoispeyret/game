@@ -5,7 +5,7 @@
 
 html {
   position: absolute;
-  background: #333;
+  background: #2d2d2d;
   font-family: 'Abel', sans-serif;
   color: #ddd;
   height: 100%;
@@ -46,7 +46,7 @@ a {
   width: 160px;
   margin: 15px auto;
   background: #eee;
-  border: 1px solid #333;
+  border: 1px solid #2d2d2d;
 }
 #map .block {
   width: 40px;
@@ -73,8 +73,8 @@ a {
   z-index: 10;
 }
 #map .block.block-3 {
-  background: #333;
-  border-color: #333;
+  background: #2d2d2d;
+  border-color: #2d2d2d;
 }
 
 .entite,
@@ -104,6 +104,10 @@ a {
   left: 50%;
   margin-left: -4px;
   margin-top: -4px;
+}
+
+#joueur1 {
+  background: #91d700;
 }
 
 #joueur2 {
