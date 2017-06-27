@@ -80,6 +80,11 @@ var entites = [
 entites.push(joueur2 = new entite('#joueur2'));
 	joueur2.coordX = 3;
 	joueur2.x = joueur2.coordX * joueur2.largeur;
+entites.push(enimi2 = new entite('#enemi2'));
+	enimi2.coordX = 5;
+	enimi2.coordY = 5;
+	enimi2.x = enimi2.coordX * enimi2.largeur;
+	enimi2.y = enimi2.coordY * enimi2.hauteur;
 entites.push(enemi1 = new entite('#enemi1'));
 	enemi1.coordX = 6;
 	enemi1.coordY = 6;
@@ -145,7 +150,9 @@ var game = {
 		this.spawn(joueur);
 		this.spawn(joueur2);
 		this.spawn(enemi1);
-		game.rode(enemi1,'y');
+        game.rode(enemi1,'y');
+		this.spawn(enimi2);
+        game.rode(enimi2,'x');
 
 		return this.introduction;
 	},
@@ -154,10 +161,14 @@ var game = {
 		if(objet.peuxBouger===true) {
 			if(key==37) {
 				objet.orientation = 270;
-                $(objet.nom).css({
+                /*$(objet.nom).css({
                     'transform':'rotateZ(270deg)'
-                });
+                });*/
                 if(this.checkMove(objet,'x-')===true) {
+                    $(objet.nom).addClass('move');
+                    setTimeout(function(){
+                        $(objet.nom).removeClass('move');
+                    },150);
                     objet.x -= objet.vitesse;
                     map[objet.coordY][objet.coordX] = 0;
                     map[objet.coordY][objet.coordX-1] = 1;
@@ -181,10 +192,14 @@ var game = {
 			}
 			if(key==39) {
                 objet.orientation = 90;
-                $(objet.nom).css({
+                /*$(objet.nom).css({
                     'transform':'rotateZ(90deg)'
-                });
+                });*/
 				if(this.checkMove(objet,'x+')===true) {
+                    $(objet.nom).addClass('move');
+                    setTimeout(function(){
+                        $(objet.nom).removeClass('move');
+                    },150);
 					objet.x += objet.vitesse;
 					map[objet.coordY][objet.coordX] = 0;
 					map[objet.coordY][objet.coordX+1] = 1;
@@ -208,10 +223,14 @@ var game = {
 			}
 			if(key==38) {
                 objet.orientation = 0;
-                $(objet.nom).css({
+                /*$(objet.nom).css({
                     'transform':'rotateZ(0deg)'
-                });
+                });*/
 				if(this.checkMove(objet,'y-')===true) {
+					$(objet.nom).addClass('move');
+                    setTimeout(function(){
+                        $(objet.nom).removeClass('move');
+					},150);
 					objet.y -= objet.vitesse;
 					map[objet.coordY][objet.coordX] = 0;
 					map[objet.coordY-1][objet.coordX] = 1;
@@ -235,10 +254,14 @@ var game = {
 			}
 			if(key==40) {
                 objet.orientation = 180;
-                $(objet.nom).css({
+                /*$(objet.nom).css({
                     'transform':'rotateZ(180deg)'
-                });
+                });*/
 				if(this.checkMove(objet,'y+')===true) {
+                    $(objet.nom).addClass('move');
+                    setTimeout(function(){
+                        $(objet.nom).removeClass('move');
+                    },150);
 					objet.y += objet.vitesse;
 					map[objet.coordY][objet.coordX] = 0;
 					map[objet.coordY+1][objet.coordX] = 1;
